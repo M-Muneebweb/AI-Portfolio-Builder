@@ -1,7 +1,9 @@
+
 import { UserInputData, GeneratedPortfolio } from "../types";
 
 // Declare global Puter object from the script tag
 declare const puter: any;
+declare const pdfjsLib: any;
 
 const FALLBACK_PORTFOLIO: GeneratedPortfolio = {
   hero: { greeting: "Hello", headline: "Portfolio", subheadline: "Welcome to my work" },
@@ -56,19 +58,15 @@ The JSON must follow this exact structure:
 // --- HELPER FUNCTIONS FOR TOKEN OPTIMIZATION ---
 const IMAGE_PLACEHOLDER_PREFIX = "##IMG_DATA_";
 
-// Recursively replace base64 strings with placeholders
 function detachImages(obj: any, imageMap: Map<string, string>, counter: { val: number }): any {
-  // If it's a string looking like an image, strip it
   if (typeof obj === 'string' && obj.startsWith('data:image')) {
       const placeholder = `${IMAGE_PLACEHOLDER_PREFIX}${counter.val++}`;
       imageMap.set(placeholder, obj);
       return placeholder;
   }
-  
   if (Array.isArray(obj)) {
     return obj.map(item => detachImages(item, imageMap, counter));
   } 
-  
   if (typeof obj === 'object' && obj !== null) {
     const newObj: any = {};
     for (const key in obj) {
@@ -79,16 +77,13 @@ function detachImages(obj: any, imageMap: Map<string, string>, counter: { val: n
   return obj;
 }
 
-// Recursively restore base64 strings from placeholders
 function reattachImages(obj: any, imageMap: Map<string, string>): any {
   if (typeof obj === 'string' && obj.startsWith(IMAGE_PLACEHOLDER_PREFIX)) {
       return imageMap.get(obj) || obj;
   }
-  
   if (Array.isArray(obj)) {
     return obj.map(item => reattachImages(item, imageMap));
   } 
-  
   if (typeof obj === 'object' && obj !== null) {
     const newObj: any = {};
     for (const key in obj) {
@@ -99,12 +94,76 @@ function reattachImages(obj: any, imageMap: Map<string, string>): any {
   return obj;
 }
 
+export async function extractTextFromPDF(file: File): Promise<string> {
+  if (!file) return "";
+  
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    // @ts-ignore
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let fullText = '';
+
+    for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items.map((item: any) => item.str).join(' ');
+        fullText += pageText + '\n';
+    }
+    return fullText;
+  } catch (e) {
+    console.error("PDF Parsing Error", e);
+    throw new Error("Could not parse PDF. Please try copying the text instead.");
+  }
+}
+
+export async function parseResumeFromText(text: string): Promise<Partial<UserInputData>> {
+  const prompt = `
+    Analyze the following Resume/CV Text and extract structured data for a portfolio website.
+    
+    Resume Text:
+    "${text.substring(0, 8000)}"
+
+    Output ONLY valid JSON matching this structure. Do not use markdown blocks.
+    {
+      "fullName": "string",
+      "role": "string (Target Job Title)",
+      "email": "string",
+      "phone": "string",
+      "bio": "string (A professional summary, max 400 chars)",
+      "skills": "string (Comma separated list)",
+      "experience": "string (A short summary of work history)",
+      "internships": [
+        { "id": "1", "company": "string", "role": "string", "duration": "string", "description": "string" }
+      ],
+      "projects": [
+         { "id": "1", "title": "string", "description": "string", "techStack": "string", "link": "" }
+      ],
+      "education": [
+         { "id": "1", "institution": "string", "degree": "string", "year": "string" }
+      ],
+      "certificates": [
+         { "id": "1", "name": "string", "issuer": "string", "year": "string" }
+      ]
+    }
+  `;
+
+  try {
+    const response = await puter.ai.chat(prompt);
+    const resultText = response?.message?.content || response?.toString() || "";
+    let cleanText = resultText.trim().replace(/```json/g, "").replace(/```/g, "");
+    // Try to catch common JSON errors (like trailing commas) if simple parse fails?
+    // For now, assume Puter returns valid JSON as instructed.
+    return JSON.parse(cleanText);
+  } catch (e) {
+    console.error("Resume Parse Error", e);
+    throw new Error("Failed to parse resume content from AI.");
+  }
+}
+
 export async function generatePortfolioData(userData: UserInputData): Promise<GeneratedPortfolio> {
   const projectsContext = userData.projects.map((p, i) => `Item ${i}: Title="${p.title}", Desc="${p.description}", Stack="${p.techStack}", Link="${p.link}"`).join('\n');
   const eduContext = userData.education.map(e => `Edu: ${e.degree} at ${e.institution} (${e.year})`).join('\n');
   const certContext = userData.certificates.map(c => `Cert: ${c.name} from ${c.issuer} (${c.year})`).join('\n');
-  
-  // Combine structured internships with the text summary if available
   const internshipContext = userData.internships.map(i => `Work: ${i.role} at ${i.company} (${i.duration}) - ${i.description}`).join('\n');
   const fullExperienceContext = `Detailed Internships:\n${internshipContext}\n\nAdditional Experience Text:\n${userData.experience}`;
 
@@ -136,14 +195,9 @@ export async function generatePortfolioData(userData: UserInputData): Promise<Ge
   `;
 
   try {
-    // Puter AI Call
     const response = await puter.ai.chat(prompt);
-    
-    // Puter returns a message object, we need the content text
     const text = response?.message?.content || response?.toString() || "";
-
     let cleanText = text.trim();
-    // Remove markdown code blocks if present
     if (cleanText.includes("```")) {
       cleanText = cleanText.replace(/```json/g, "").replace(/```/g, "");
     }
@@ -158,7 +212,6 @@ export async function generatePortfolioData(userData: UserInputData): Promise<Ge
     
     if (!data) return FALLBACK_PORTFOLIO;
     
-    // Defaults to prevent crashes
     if (!data.hero) data.hero = { greeting: "Hi, I'm", headline: userData.fullName || "Creator", subheadline: userData.role || "Welcome" };
     if (!data.about) data.about = { content: userData.bio || "Welcome to my portfolio." };
     if (!data.skills || !Array.isArray(data.skills)) data.skills = userData.skills ? userData.skills.split(',').map(s=>s.trim()) : [];
@@ -169,9 +222,9 @@ export async function generatePortfolioData(userData: UserInputData): Promise<Ge
     data.theme.textColor = data.theme.textColor || "#f8fafc";
     data.theme.primaryColor = data.theme.primaryColor || "#3b82f6";
 
-    // --- RE-ATTACH USER IMAGES (Projects & Certificates) ---
+    // --- RE-ATTACH USER IMAGES ---
     data.sections.forEach(section => {
-      // 1. Projects (Grid)
+      // Projects
       if (section.type === 'grid' || section.title.toLowerCase().includes('work') || section.title.toLowerCase().includes('project')) {
         if (section.items && userData.projects.length > 0) {
            section.items.forEach((item, index) => {
@@ -188,20 +241,15 @@ export async function generatePortfolioData(userData: UserInputData): Promise<Ge
            });
         }
       }
-
-      // 2. Certificates (List)
-      // Check if this section seems to contain certificates
+      // Certificates
       if (section.type === 'list' && (section.title.toLowerCase().includes('cert') || section.title.toLowerCase().includes('education'))) {
           if (section.items && userData.certificates.length > 0) {
             section.items.forEach(item => {
-               // Fuzzy match title or subtitle to certificate name
                const originalCert = userData.certificates.find(c => 
                   item.title.toLowerCase().includes(c.name.toLowerCase()) || 
                   (item.subtitle && item.subtitle.toLowerCase().includes(c.name.toLowerCase()))
                );
-               
                if (originalCert && originalCert.imageUrl) {
-                   // Attach the image URL. The portfolio renderer looks for 'imageUrls' array.
                    item.imageUrls = [originalCert.imageUrl];
                }
             });
@@ -217,46 +265,33 @@ export async function generatePortfolioData(userData: UserInputData): Promise<Ge
 }
 
 export async function modifyPortfolio(currentPortfolio: GeneratedPortfolio, userInstruction: string): Promise<GeneratedPortfolio> {
-  // 1. Strip images to reduce token count
   const imageMap = new Map<string, string>();
   const counter = { val: 0 };
   const lightweightPortfolio = detachImages(currentPortfolio, imageMap, counter);
 
   const prompt = `
-    Current Portfolio JSON (Images are hidden as placeholders like ##IMG_DATA_x, DO NOT TOUCH THEM):
+    Current Portfolio JSON (Images are hidden as placeholders):
     ${JSON.stringify(lightweightPortfolio)}
 
     User Instruction: "${userInstruction}"
 
     Task:
     Modify the JSON to satisfy the user's request.
-    - If changing theme, update 'theme'.
-    - If rewriting text, update 'about' or 'hero'.
-    - DO NOT REMOVE or CHANGE the "imageUrls" placeholders. Keep them exactly as is.
-    - If expanding experience, generate professional bullet points.
-
     ${JSON_STRUCTURE_INSTRUCTION}
   `;
 
   try {
     const response = await puter.ai.chat(prompt);
     const text = response?.message?.content || response?.toString() || "";
-    
-    let cleanText = text.trim();
-    if (cleanText.includes("```")) {
-      cleanText = cleanText.replace(/```json/g, "").replace(/```/g, "");
-    }
+    let cleanText = text.trim().replace(/```json/g, "").replace(/```/g, "");
 
     const data = JSON.parse(cleanText) as GeneratedPortfolio;
     
-    // Safety checks
     if (!data.sections) data.sections = currentPortfolio.sections || [];
     if (!data.theme) data.theme = currentPortfolio.theme;
     if (!data.hero) data.hero = currentPortfolio.hero;
     
-    // 2. Restore images
     const fullPortfolio = reattachImages(data, imageMap);
-
     return fullPortfolio;
   } catch(error) {
     console.error("Modification Error:", error);
