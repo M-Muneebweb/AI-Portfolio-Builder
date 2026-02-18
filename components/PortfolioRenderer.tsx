@@ -87,24 +87,24 @@ export const PortfolioRenderer: React.FC<PortfolioRendererProps> = ({ portfolio,
                 if (item.imageUrls && item.imageUrls.length > 0) {
                    const imgs = item.imageUrls.map(url => getImgSrc(url));
                    imageGallery = `
-                   <div class="carousel-container h-56 w-full relative overflow-x-auto snap-x snap-mandatory flex scrollbar-hide">
+                   <div class="carousel-container h-56 w-full relative overflow-x-auto snap-x snap-mandatory flex scrollbar-hide bg-black/20">
                       ${imgs.map(src => `<img src="${src}" class="w-full h-full object-cover flex-shrink-0 snap-center" />`).join('')}
                    </div>
-                   ${imgs.length > 1 ? `<div class="text-xs text-center py-1 opacity-50">Swipe for more images</div>` : ''}
+                   ${imgs.length > 1 ? `<div class="text-xs text-center py-2 opacity-50 italic">Swipe gallery</div>` : ''}
                    `;
                 }
 
                 return `
-              <div class="group rounded-2xl overflow-hidden transition-all hover:-translate-y-2 hover:shadow-2xl border" style="background-color: ${pf.theme.cardColor}; border-color: ${pf.theme.primaryColor}20">
+              <div class="group rounded-2xl overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl border flex flex-col h-full" style="background-color: ${pf.theme.cardColor}; border-color: ${pf.theme.primaryColor}20">
                 ${imageGallery}
-                <div class="p-8 space-y-4">
+                <div class="p-8 space-y-4 flex-1 flex flex-col">
                   <div class="flex justify-between items-start">
                     <h3 class="text-2xl font-bold leading-tight" style="color: ${pf.theme.textColor}">${item.title}</h3>
-                    ${item.link ? `<a href="${item.link}" target="_blank" class="p-2 rounded-full hover:bg-white/10"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${pf.theme.accentColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>` : ''}
+                    ${item.link ? `<a href="${item.link}" target="_blank" class="p-2 rounded-full hover:bg-white/10 transition-colors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="${pf.theme.accentColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg></a>` : ''}
                   </div>
-                  <p class="text-sm leading-relaxed opacity-70" style="color: ${pf.theme.textColor}">${item.description}</p>
-                  <div class="flex flex-wrap gap-2 pt-2">
-                    ${item.tags?.map(tag => `<span class="text-xs font-bold px-3 py-1 rounded-full opacity-80" style="background-color: ${pf.theme.backgroundColor}; color: ${pf.theme.primaryColor}">${tag}</span>`).join('') || ''}
+                  <p class="text-sm leading-relaxed opacity-70 flex-1" style="color: ${pf.theme.textColor}">${item.description}</p>
+                  <div class="flex flex-wrap gap-2 pt-4 mt-auto">
+                    ${item.tags?.map(tag => `<span class="text-xs font-bold px-3 py-1 rounded-full opacity-80" style="background-color: ${pf.theme.backgroundColor}; color: ${pf.theme.primaryColor}; border: 1px solid ${pf.theme.primaryColor}30">${tag}</span>`).join('') || ''}
                   </div>
                 </div>
               </div>
@@ -114,17 +114,15 @@ export const PortfolioRenderer: React.FC<PortfolioRendererProps> = ({ portfolio,
         content = `
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             ${section.items?.map(item => {
-               // Check if there is an image (Certificate)
                const imgUrl = (item.imageUrls && item.imageUrls.length > 0) ? getImgSrc(item.imageUrls[0]) : null;
-               
                return `
-              <div class="flex flex-col p-8 rounded-2xl border hover:border-opacity-50 transition-colors relative overflow-hidden" style="background-color: ${pf.theme.cardColor}; border-color: ${pf.theme.textColor}10">
-                 <div class="flex gap-4 items-start z-10">
-                    ${imgUrl ? `<img src="${imgUrl}" class="w-16 h-16 rounded-lg object-cover border border-white/10" />` : ''}
+              <div class="flex flex-col p-8 rounded-2xl border hover:border-opacity-50 transition-all duration-300 relative overflow-hidden group hover:shadow-lg" style="background-color: ${pf.theme.cardColor}; border-color: ${pf.theme.textColor}10">
+                 <div class="flex gap-5 items-start z-10">
+                    ${imgUrl ? `<img src="${imgUrl}" class="w-16 h-16 rounded-xl object-cover border border-white/10 shadow-md" />` : ''}
                     <div>
-                        <div class="flex items-center gap-2 mb-2 flex-wrap">
+                        <div class="flex items-center gap-3 mb-2 flex-wrap">
                            <h3 class="text-xl font-bold" style="color: ${pf.theme.textColor}">${item.title}</h3>
-                           ${item.subtitle ? `<span class="text-xs font-bold px-2 py-1 rounded opacity-70" style="background-color: ${pf.theme.backgroundColor}; color: ${pf.theme.textColor}">${item.subtitle}</span>` : ''}
+                           ${item.subtitle ? `<span class="text-xs font-bold px-2 py-1 rounded opacity-70 uppercase tracking-wide" style="background-color: ${pf.theme.backgroundColor}; color: ${pf.theme.textColor}">${item.subtitle}</span>` : ''}
                         </div>
                         <p class="text-sm opacity-60 leading-relaxed" style="color: ${pf.theme.textColor}">${item.description}</p>
                     </div>
@@ -136,19 +134,19 @@ export const PortfolioRenderer: React.FC<PortfolioRendererProps> = ({ portfolio,
         content = `
            <div class="space-y-0 relative border-l-2 ml-4 md:ml-0 md:border-l-0" style="border-color: ${pf.theme.primaryColor}30">
              ${section.items?.map(item => `
-               <div class="md:flex gap-12 group relative pb-12 last:pb-0">
+               <div class="md:flex gap-12 group relative pb-16 last:pb-0">
                  <div class="absolute -left-[9px] top-2 w-4 h-4 rounded-full border-4 md:hidden" style="background-color: ${pf.theme.primaryColor}; border-color: ${pf.theme.backgroundColor}"></div>
                  <div class="md:w-1/3 text-right hidden md:block pt-2 pr-12 relative border-r-2" style="border-color: ${pf.theme.primaryColor}30">
-                    <div class="absolute -right-[9px] top-4 w-4 h-4 rounded-full border-4" style="background-color: ${pf.theme.primaryColor}; border-color: ${pf.theme.backgroundColor}"></div>
-                    <span class="text-sm font-bold opacity-60 block mb-1" style="color: ${pf.theme.primaryColor}">${item.subtitle || ''}</span>
+                    <div class="absolute -right-[9px] top-4 w-4 h-4 rounded-full border-4 transition-transform group-hover:scale-125" style="background-color: ${pf.theme.primaryColor}; border-color: ${pf.theme.backgroundColor}"></div>
+                    <span class="text-sm font-bold opacity-80 block mb-1" style="color: ${pf.theme.primaryColor}">${item.subtitle || ''}</span>
                     <div class="flex justify-end gap-2 flex-wrap">
-                      ${item.tags?.map(t => `<span class="text-xs opacity-40" style="color: ${pf.theme.textColor}">#${t}</span>`).join('') || ''}
+                      ${item.tags?.map(t => `<span class="text-xs opacity-50 px-2 py-1 rounded" style="background-color: ${pf.theme.cardColor}; color: ${pf.theme.textColor}">#${t}</span>`).join('') || ''}
                     </div>
                  </div>
                  <div class="md:w-2/3 pl-6 md:pl-0 md:pt-1">
-                    <span class="md:hidden text-xs font-bold opacity-60 block mb-1" style="color: ${pf.theme.primaryColor}">${item.subtitle || ''}</span>
-                    <h3 class="text-xl font-bold mb-2" style="color: ${pf.theme.textColor}">${item.title}</h3>
-                    <p class="text-sm opacity-70 leading-relaxed max-w-xl whitespace-pre-wrap" style="color: ${pf.theme.textColor}">${item.description}</p>
+                    <span class="md:hidden text-xs font-bold opacity-80 block mb-1" style="color: ${pf.theme.primaryColor}">${item.subtitle || ''}</span>
+                    <h3 class="text-xl font-bold mb-3" style="color: ${pf.theme.textColor}">${item.title}</h3>
+                    <p class="text-sm opacity-70 leading-relaxed max-w-2xl whitespace-pre-wrap p-4 rounded-xl" style="background-color: ${pf.theme.cardColor}50; color: ${pf.theme.textColor}">${item.description}</p>
                  </div>
                </div>
              `).join('')}
@@ -156,10 +154,11 @@ export const PortfolioRenderer: React.FC<PortfolioRendererProps> = ({ portfolio,
       }
 
       return `
-        <div class="space-y-12 mb-32">
-          <div class="flex flex-col items-start gap-2">
+        <div class="space-y-12 mb-32 section-fade-in">
+          <div class="flex flex-col items-start gap-2 relative">
             <span class="text-sm font-bold tracking-widest uppercase opacity-60" style="color: ${pf.theme.accentColor}">0${idx + 1}</span>
-            <h2 class="text-4xl font-bold" style="color: ${pf.theme.textColor}">${section.title}</h2>
+            <h2 class="text-4xl md:text-5xl font-bold tracking-tight" style="color: ${pf.theme.textColor}">${section.title}</h2>
+            <div class="w-20 h-1 mt-2 rounded-full" style="background-color: ${pf.theme.primaryColor}"></div>
           </div>
           ${content}
         </div>
@@ -168,7 +167,7 @@ export const PortfolioRenderer: React.FC<PortfolioRendererProps> = ({ portfolio,
 
     // CLEAN EXPORT TEMPLATE
     return `<!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -177,46 +176,52 @@ export const PortfolioRenderer: React.FC<PortfolioRendererProps> = ({ portfolio,
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
        body { font-family: 'Inter', sans-serif; background-color: ${pf.theme.backgroundColor}; color: ${pf.theme.textColor}; }
-       .glass { background: ${pf.theme.cardColor}80; backdrop-filter: blur(10px); }
+       .glass { background: ${pf.theme.cardColor}80; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
        .scrollbar-hide::-webkit-scrollbar { display: none; }
        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-       .animate-fade-in-up { animation: fadeInUp 0.8s ease-out; }
-       @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+       .animate-fade-in-up { animation: fadeInUp 1s ease-out forwards; opacity: 0; }
+       @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+       .section-fade-in { animation: fadeInUp 0.8s ease-out forwards; }
     </style>
 </head>
-<body class="min-h-screen">
-    <nav class="fixed top-0 w-full z-40 backdrop-blur-xl border-b" style="border-color: ${pf.theme.textColor}10; background-color: ${pf.theme.backgroundColor}90">
-        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+<body class="min-h-screen selection:bg-[${pf.theme.primaryColor}] selection:text-white">
+    <nav class="fixed top-0 w-full z-40 backdrop-blur-md border-b transition-all duration-300" style="border-color: ${pf.theme.textColor}10; background-color: ${pf.theme.backgroundColor}90">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
             <div class="text-xl font-bold tracking-tight" style="color: ${pf.theme.primaryColor}">${ud.fullName}</div>
-            <a href="mailto:${contactEmail}" class="px-5 py-2 text-sm font-bold rounded-full transition-transform hover:scale-105 shadow-lg flex items-center" style="background-color: ${pf.theme.primaryColor}; color: ${pf.theme.backgroundColor}">
+            <a href="mailto:${contactEmail}" class="px-6 py-2.5 text-sm font-bold rounded-full transition-all hover:scale-105 shadow-lg shadow-[${pf.theme.primaryColor}]/20 flex items-center" style="background-color: ${pf.theme.primaryColor}; color: ${pf.theme.backgroundColor}">
                Hire Me
             </a>
         </div>
     </nav>
 
-    <section class="pt-40 pb-20 px-6 relative overflow-hidden">
-        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[60vw] h-[60vh] rounded-full blur-[120px] -z-10 opacity-30" style="background-color: ${pf.theme.accentColor}"></div>
-        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
-             <div class="space-y-8 animate-fade-in-up">
-                 <div class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border backdrop-blur-sm" style="border-color: ${pf.theme.accentColor}; color: ${pf.theme.accentColor}; background-color: ${pf.theme.accentColor}10">
-                    ${pf.hero?.greeting}
+    <section class="min-h-screen flex items-center pt-20 pb-20 px-6 relative overflow-hidden">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[60vw] h-[60vh] rounded-full blur-[120px] -z-10 opacity-30 animate-pulse" style="background-color: ${pf.theme.accentColor}"></div>
+        <div class="absolute bottom-0 right-0 w-[40vw] h-[40vh] rounded-full blur-[100px] -z-10 opacity-20" style="background-color: ${pf.theme.primaryColor}"></div>
+
+        <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center w-full">
+             <div class="space-y-10 animate-fade-in-up" style="animation-delay: 0.1s">
+                 <div class="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium border backdrop-blur-sm" style="border-color: ${pf.theme.accentColor}; color: ${pf.theme.accentColor}; background-color: ${pf.theme.accentColor}10">
+                    <span class="mr-2">✨</span> ${pf.hero?.greeting}
                  </div>
-                 <h1 class="text-5xl md:text-7xl font-bold leading-[1.1] tracking-tight" style="color: ${pf.theme.textColor}">${pf.hero?.headline}</h1>
-                 <p class="text-xl opacity-80 leading-relaxed max-w-lg">${pf.hero?.subheadline}</p>
-                 <div class="flex flex-wrap gap-3 pt-2">
-                    ${pf.skills?.map(skill => `<span class="px-4 py-2 rounded-lg border text-sm font-medium backdrop-blur-md" style="border-color: ${pf.theme.textColor}20; color: ${pf.theme.textColor}; background-color: ${pf.theme.cardColor}50">${skill}</span>`).join('')}
+                 <h1 class="text-6xl md:text-8xl font-bold leading-[1] tracking-tight" style="color: ${pf.theme.textColor}">${pf.hero?.headline}</h1>
+                 <p class="text-2xl opacity-80 leading-relaxed max-w-lg font-light">${pf.hero?.subheadline}</p>
+                 <div class="flex flex-wrap gap-3 pt-4">
+                    ${pf.skills?.map(skill => `<span class="px-5 py-2.5 rounded-xl border text-sm font-medium backdrop-blur-md transition-transform hover:-translate-y-1" style="border-color: ${pf.theme.textColor}20; color: ${pf.theme.textColor}; background-color: ${pf.theme.cardColor}50">${skill}</span>`).join('')}
                  </div>
              </div>
-             <div class="relative flex justify-center md:justify-end">
-                ${ud.photoUrl ? `<img src="${getImgSrc(ud.photoUrl)}" class="w-72 h-72 md:w-96 md:h-96 object-cover rounded-[2.5rem] shadow-2xl rotate-3 hover:rotate-0 transition-all duration-700 border-4" style="border-color: ${pf.theme.cardColor}" />` : ''}
+             <div class="relative flex justify-center md:justify-end animate-fade-in-up" style="animation-delay: 0.3s">
+                <div class="relative z-10">
+                ${ud.photoUrl ? `<img src="${getImgSrc(ud.photoUrl)}" class="w-80 h-80 md:w-[500px] md:h-[500px] object-cover rounded-[3rem] shadow-2xl rotate-3 hover:rotate-0 transition-all duration-700 border-4" style="border-color: ${pf.theme.cardColor}" />` : ''}
+                </div>
+                <div class="absolute inset-0 border-2 rounded-[3rem] -z-10 translate-x-6 translate-y-6 opacity-40" style="border-color: ${pf.theme.primaryColor}"></div>
              </div>
         </div>
     </section>
 
-    <section class="py-24 px-6 relative">
-        <div class="max-w-4xl mx-auto text-center space-y-8 glass p-8 md:p-12 rounded-3xl border border-white/5 shadow-2xl">
-            <h2 class="text-3xl font-bold">About Me</h2>
-            <p class="text-lg md:text-xl leading-relaxed opacity-90">${pf.about?.content}</p>
+    <section class="py-32 px-6 relative">
+        <div class="max-w-4xl mx-auto text-center space-y-8 glass p-10 md:p-16 rounded-[2.5rem] shadow-2xl">
+            <h2 class="text-3xl font-bold opacity-50 uppercase tracking-widest">About</h2>
+            <p class="text-xl md:text-3xl leading-relaxed font-light" style="color: ${pf.theme.textColor}">${pf.about?.content}</p>
         </div>
     </section>
 
@@ -224,18 +229,21 @@ export const PortfolioRenderer: React.FC<PortfolioRendererProps> = ({ portfolio,
         ${sectionsHtml}
     </div>
 
-    <footer class="py-16 mt-32 border-t" style="border-color: ${pf.theme.textColor}10; background-color: ${pf.theme.cardColor}50">
+    <footer class="py-20 mt-32 border-t" style="border-color: ${pf.theme.textColor}10; background-color: ${pf.theme.cardColor}50">
         <div class="max-w-7xl mx-auto px-6 flex flex-col items-center text-center opacity-80">
-            <h3 class="text-2xl font-bold mb-6 tracking-tight">${ud.fullName}</h3>
+            <h3 class="text-3xl font-bold mb-8 tracking-tight">${ud.fullName}</h3>
             
-            <div class="flex flex-wrap justify-center gap-8 mb-8 text-sm">
-               ${contactEmail ? `<a href="mailto:${contactEmail}" class="flex items-center gap-2 hover:text-[${pf.theme.primaryColor}]"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg> ${contactEmail}</a>` : ''}
-               ${contactPhone ? `<span class="flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> ${contactPhone}</span>` : ''}
-               ${contactAge ? `<span class="flex items-center gap-2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg> ${contactAge}</span>` : ''}
+            <div class="flex flex-wrap justify-center gap-8 mb-12 text-base font-medium">
+               ${contactEmail ? `<a href="mailto:${contactEmail}" class="flex items-center gap-2 hover:text-[${pf.theme.primaryColor}] transition-colors"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg> ${contactEmail}</a>` : ''}
+               ${contactPhone ? `<span class="flex items-center gap-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> ${contactPhone}</span>` : ''}
+               ${contactAge ? `<span class="flex items-center gap-2"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg> ${contactAge}</span>` : ''}
             </div>
 
-            <p class="mb-8 max-w-md text-sm opacity-50">Thanks for visiting.</p>
-            <div class="text-xs pt-8 border-t w-full max-w-xs" style="border-color: ${pf.theme.textColor}20">Generated by GeminiFolio</div>
+            <p class="mb-8 max-w-md text-sm opacity-50">© ${new Date().getFullYear()} ${ud.fullName}. All rights reserved.</p>
+            <div class="text-xs pt-8 border-t w-full max-w-xs flex justify-center items-center gap-2" style="border-color: ${pf.theme.textColor}20">
+               <span class="opacity-50">Built with</span> 
+               <span class="font-bold opacity-100">GeminiFolio AI</span>
+            </div>
         </div>
     </footer>
 </body>
@@ -320,25 +328,25 @@ export const PortfolioRenderer: React.FC<PortfolioRendererProps> = ({ portfolio,
       </nav>
 
       {/* Hero */}
-      <section className="pt-40 pb-20 px-6 relative overflow-hidden">
+      <section className="pt-40 pb-20 px-6 relative overflow-hidden min-h-[90vh] flex items-center">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[60vw] h-[60vh] rounded-full blur-[120px] -z-10 opacity-30 transition-colors duration-1000" style={{ backgroundColor: theme.accentColor }}></div>
         <div className="absolute bottom-0 right-0 w-[40vw] h-[40vh] rounded-full blur-[100px] -z-10 opacity-20 transition-colors duration-1000" style={{ backgroundColor: theme.primaryColor }}></div>
 
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center w-full">
           <div className="space-y-8 animate-fade-in-up">
             <div className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border backdrop-blur-sm" style={{ borderColor: theme.accentColor, color: theme.accentColor, backgroundColor: `${theme.accentColor}10` }}>
               <Sparkles size={14} className="mr-2" />
               {portfolio.hero?.greeting || "Hello there"}
             </div>
-            <h1 className="text-5xl md:text-7xl font-bold leading-[1.1] tracking-tight" style={styles.text}>
+            <h1 className="text-5xl md:text-8xl font-bold leading-[1.1] tracking-tight" style={styles.text}>
               {portfolio.hero?.headline || "Creative Developer"}
             </h1>
-            <p className="text-xl opacity-80 leading-relaxed max-w-lg" style={styles.text}>
+            <p className="text-xl md:text-2xl opacity-80 leading-relaxed max-w-lg font-light" style={styles.text}>
               {portfolio.hero?.subheadline || "Building digital experiences that matter."}
             </p>
-            <div className="flex flex-wrap gap-3 pt-2">
+            <div className="flex flex-wrap gap-3 pt-4">
               {portfolio.skills?.map((skill, idx) => (
-                <span key={idx} className="px-4 py-2 rounded-lg border text-sm font-medium backdrop-blur-md hover:-translate-y-1 transition-transform" style={{ borderColor: `${theme.textColor}20`, color: theme.textColor, backgroundColor: `${theme.cardColor}50` }}>
+                <span key={idx} className="px-5 py-2 rounded-xl border text-sm font-medium backdrop-blur-md hover:-translate-y-1 transition-transform" style={{ borderColor: `${theme.textColor}20`, color: theme.textColor, backgroundColor: `${theme.cardColor}50` }}>
                   {skill}
                 </span>
               ))}
@@ -351,7 +359,7 @@ export const PortfolioRenderer: React.FC<PortfolioRendererProps> = ({ portfolio,
                   <img 
                     src={userData.photoUrl} 
                     alt={userData.fullName} 
-                    className="w-72 h-72 md:w-96 md:h-96 object-cover rounded-[2.5rem] shadow-2xl rotate-3 hover:rotate-0 transition-all duration-700 border-4"
+                    className="w-72 h-72 md:w-[500px] md:h-[500px] object-cover rounded-[3rem] shadow-2xl rotate-3 hover:rotate-0 transition-all duration-700 border-4"
                     style={{ borderColor: theme.cardColor }}
                   />
                ) : (
@@ -359,7 +367,7 @@ export const PortfolioRenderer: React.FC<PortfolioRendererProps> = ({ portfolio,
                     <span className="text-8xl">🚀</span>
                   </div>
                )}
-               <div className="absolute inset-0 border-2 rounded-[2.5rem] -z-10 translate-x-4 translate-y-4 opacity-50" style={{ borderColor: theme.primaryColor }}></div>
+               <div className="absolute inset-0 border-2 rounded-[3rem] -z-10 translate-x-4 translate-y-4 opacity-50" style={{ borderColor: theme.primaryColor }}></div>
              </div>
           </div>
         </div>
@@ -367,9 +375,9 @@ export const PortfolioRenderer: React.FC<PortfolioRendererProps> = ({ portfolio,
 
       {/* About */}
       <section className="py-24 px-6 relative">
-        <div className="max-w-4xl mx-auto text-center space-y-8 glass p-8 md:p-12 rounded-3xl border border-white/5 shadow-2xl" style={{ backgroundColor: `${theme.cardColor}80` }}>
-          <h2 className="text-3xl font-bold" style={styles.text}>About Me</h2>
-          <p className="text-lg md:text-xl leading-relaxed opacity-90" style={styles.text}>
+        <div className="max-w-5xl mx-auto text-center space-y-8 glass p-10 md:p-20 rounded-[3rem] border border-white/5 shadow-2xl" style={{ backgroundColor: `${theme.cardColor}80` }}>
+          <h2 className="text-lg font-bold uppercase tracking-widest opacity-50" style={styles.text}>About Me</h2>
+          <p className="text-2xl md:text-4xl leading-relaxed opacity-90 font-light" style={styles.text}>
             {portfolio.about?.content || "I am a passionate professional dedicated to my craft."}
           </p>
         </div>
@@ -379,29 +387,30 @@ export const PortfolioRenderer: React.FC<PortfolioRendererProps> = ({ portfolio,
       <div className="space-y-32 py-20 px-6 max-w-7xl mx-auto">
         {portfolio.sections?.map((section, idx) => (
           <div key={idx} className="space-y-12">
-            <div className="flex flex-col items-start gap-2">
+            <div className="flex flex-col items-start gap-4">
               <span className="text-sm font-bold tracking-widest uppercase opacity-60" style={{ color: theme.accentColor }}>0{idx + 1}</span>
-              <h2 className="text-4xl font-bold" style={styles.text}>{section.title}</h2>
+              <h2 className="text-5xl md:text-6xl font-bold tracking-tight" style={styles.text}>{section.title}</h2>
+              <div className="w-24 h-1.5 rounded-full" style={{ backgroundColor: theme.primaryColor }}></div>
             </div>
 
             {/* Grid (Projects) */}
             {section.type === 'grid' && (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {section.items?.map((item, i) => (
-                  <div key={i} className="group rounded-2xl overflow-hidden transition-all hover:-translate-y-2 hover:shadow-2xl border" style={styles.card}>
+                  <div key={i} className="group rounded-3xl overflow-hidden transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border flex flex-col h-full" style={styles.card}>
                     {/* Image Carousel for Preview */}
                     {item.imageUrls && item.imageUrls.length > 0 && (
-                      <div className="h-56 w-full overflow-hidden relative">
+                      <div className="h-64 w-full overflow-hidden relative">
                          <div className="flex overflow-x-auto snap-x snap-mandatory h-full scrollbar-hide">
                             {item.imageUrls.map((url, imgIdx) => (
                                <img key={imgIdx} src={url} alt={item.title} className="w-full h-full object-cover flex-shrink-0 snap-center" />
                             ))}
                          </div>
-                         {item.imageUrls.length > 1 && <div className="absolute bottom-2 right-2 bg-black/50 px-2 py-1 rounded text-xs text-white">Swipe for more</div>}
+                         {item.imageUrls.length > 1 && <div className="absolute bottom-3 right-3 bg-black/50 backdrop-blur px-3 py-1 rounded-full text-xs text-white font-medium">Swipe</div>}
                       </div>
                     )}
                     
-                    <div className="p-8 space-y-4">
+                    <div className="p-8 space-y-4 flex-1 flex flex-col">
                       <div className="flex justify-between items-start">
                         <h3 className="text-2xl font-bold leading-tight" style={styles.text}>{item.title}</h3>
                         {item.link && (
@@ -410,10 +419,10 @@ export const PortfolioRenderer: React.FC<PortfolioRendererProps> = ({ portfolio,
                           </a>
                         )}
                       </div>
-                      <p className="text-sm leading-relaxed opacity-70" style={styles.text}>{item.description}</p>
-                      <div className="flex flex-wrap gap-2 pt-2">
+                      <p className="text-sm leading-relaxed opacity-70 flex-1" style={styles.text}>{item.description}</p>
+                      <div className="flex flex-wrap gap-2 pt-4 mt-auto">
                         {item.tags?.map((tag, t) => (
-                          <span key={t} className="text-xs font-bold px-3 py-1 rounded-full opacity-80" style={{ backgroundColor: theme.backgroundColor, color: theme.primaryColor }}>
+                          <span key={t} className="text-xs font-bold px-3 py-1.5 rounded-full opacity-80 border" style={{ backgroundColor: theme.backgroundColor, color: theme.primaryColor, borderColor: `${theme.primaryColor}20` }}>
                             {tag}
                           </span>
                         ))}
@@ -430,15 +439,15 @@ export const PortfolioRenderer: React.FC<PortfolioRendererProps> = ({ portfolio,
                   {section.items?.map((item, i) => {
                     const imgUrl = (item.imageUrls && item.imageUrls.length > 0) ? item.imageUrls[0] : null;
                     return (
-                    <div key={i} className="flex flex-col p-8 rounded-2xl border hover:border-opacity-50 transition-colors relative" style={{ ...styles.card, borderColor: `${theme.textColor}10` }}>
-                       <div className="flex gap-4 items-start">
+                    <div key={i} className="flex flex-col p-8 rounded-2xl border hover:border-opacity-50 transition-all duration-300 relative group hover:shadow-lg" style={{ ...styles.card, borderColor: `${theme.textColor}10` }}>
+                       <div className="flex gap-5 items-start">
                           {imgUrl && (
-                             <img src={imgUrl} className="w-16 h-16 rounded-lg object-cover border border-white/10 flex-shrink-0" alt="Credential" />
+                             <img src={imgUrl} className="w-16 h-16 rounded-xl object-cover border border-white/10 flex-shrink-0 shadow-md" alt="Credential" />
                           )}
                           <div>
-                            <div className="flex items-center gap-2 mb-2 flex-wrap">
+                            <div className="flex items-center gap-3 mb-2 flex-wrap">
                                 <h3 className="text-xl font-bold" style={styles.text}>{item.title}</h3>
-                                {item.subtitle && <span className="text-xs font-bold px-2 py-1 rounded opacity-70" style={{ backgroundColor: theme.backgroundColor, color: theme.textColor }}>{item.subtitle}</span>}
+                                {item.subtitle && <span className="text-xs font-bold px-2 py-1 rounded opacity-70 uppercase tracking-wide" style={{ backgroundColor: theme.backgroundColor, color: theme.textColor }}>{item.subtitle}</span>}
                             </div>
                             <p className="text-sm opacity-60 leading-relaxed" style={styles.text}>{item.description}</p>
                           </div>
@@ -452,23 +461,23 @@ export const PortfolioRenderer: React.FC<PortfolioRendererProps> = ({ portfolio,
             {section.type === 'timeline' && (
                <div className="space-y-0 relative border-l-2 ml-4 md:ml-0 md:border-l-0" style={{ borderColor: `${theme.primaryColor}30` }}>
                  {section.items?.map((item, i) => (
-                   <div key={i} className="md:flex gap-12 group relative pb-12 last:pb-0">
+                   <div key={i} className="md:flex gap-12 group relative pb-16 last:pb-0">
                      <div className="absolute -left-[9px] top-2 w-4 h-4 rounded-full border-4 border-[#0f172a] md:hidden" style={{ backgroundColor: theme.primaryColor }}></div>
                      
                      <div className="md:w-1/3 text-right hidden md:block pt-2 pr-12 relative border-r-2" style={{ borderColor: `${theme.primaryColor}30` }}>
-                        <div className="absolute -right-[9px] top-4 w-4 h-4 rounded-full border-4" style={{ backgroundColor: theme.primaryColor, borderColor: theme.backgroundColor }}></div>
-                        <span className="text-sm font-bold opacity-60 block mb-1" style={styles.primary}>{item.subtitle}</span>
+                        <div className="absolute -right-[9px] top-4 w-4 h-4 rounded-full border-4 transition-transform group-hover:scale-125" style={{ backgroundColor: theme.primaryColor, borderColor: theme.backgroundColor }}></div>
+                        <span className="text-sm font-bold opacity-80 block mb-1" style={styles.primary}>{item.subtitle}</span>
                         {item.tags && (
                           <div className="flex justify-end gap-2 flex-wrap">
-                            {item.tags.map((t, idx) => <span key={idx} className="text-xs opacity-40" style={styles.text}>#{t}</span>)}
+                            {item.tags.map((t, idx) => <span key={idx} className="text-xs opacity-50 px-2 py-1 rounded" style={{...styles.text, backgroundColor: theme.cardColor}}>#{t}</span>)}
                           </div>
                         )}
                      </div>
 
                      <div className="md:w-2/3 pl-6 md:pl-0 md:pt-1">
-                        <span className="md:hidden text-xs font-bold opacity-60 block mb-1" style={styles.primary}>{item.subtitle}</span>
-                        <h3 className="text-xl font-bold mb-2" style={styles.text}>{item.title}</h3>
-                        <p className="text-sm opacity-70 leading-relaxed max-w-xl whitespace-pre-wrap" style={styles.text}>{item.description}</p>
+                        <span className="md:hidden text-xs font-bold opacity-80 block mb-1" style={styles.primary}>{item.subtitle}</span>
+                        <h3 className="text-2xl font-bold mb-3" style={styles.text}>{item.title}</h3>
+                        <p className="text-sm opacity-70 leading-relaxed max-w-2xl whitespace-pre-wrap p-6 rounded-2xl" style={{ ...styles.text, backgroundColor: `${theme.cardColor}50` }}>{item.description}</p>
                         <div className="md:hidden flex gap-2 mt-3 flex-wrap">
                             {item.tags?.map((t, idx) => <span key={idx} className="text-xs opacity-40" style={styles.text}>#{t}</span>)}
                         </div>
@@ -481,29 +490,29 @@ export const PortfolioRenderer: React.FC<PortfolioRendererProps> = ({ portfolio,
         ))}
       </div>
 
-      <footer className="py-16 mt-32 border-t" style={{ borderColor: `${theme.textColor}10`, backgroundColor: `${theme.cardColor}50` }}>
+      <footer className="py-24 mt-32 border-t" style={{ borderColor: `${theme.textColor}10`, backgroundColor: `${theme.cardColor}50` }}>
         <div className="max-w-7xl mx-auto px-6 flex flex-col items-center text-center opacity-80" style={styles.text}>
-          <h3 className="text-2xl font-bold mb-6 tracking-tight">{userData.fullName}</h3>
+          <h3 className="text-3xl font-bold mb-8 tracking-tight">{userData.fullName}</h3>
           
-          <div className="flex flex-wrap justify-center gap-8 mb-8 text-sm">
+          <div className="flex flex-wrap justify-center gap-8 mb-12 text-base font-medium">
              {userData.email && (
                  <a href={`mailto:${userData.email}`} className="flex items-center gap-2 hover:opacity-100 opacity-70 transition-opacity">
-                     <Mail size={16} /> {userData.email}
+                     <Mail size={18} /> {userData.email}
                  </a>
              )}
              {userData.phone && (
                  <span className="flex items-center gap-2 opacity-70">
-                     <Phone size={16} /> {userData.phone}
+                     <Phone size={18} /> {userData.phone}
                  </span>
              )}
              {userData.age && (
                  <span className="flex items-center gap-2 opacity-70">
-                     <MapPin size={16} /> {userData.age}
+                     <MapPin size={18} /> {userData.age}
                  </span>
              )}
           </div>
 
-          <p className="mb-8 max-w-md text-sm opacity-50">Thanks for visiting.</p>
+          <p className="mb-8 max-w-md text-sm opacity-50">© {new Date().getFullYear()} All rights reserved.</p>
           <div className="text-xs pt-8 border-t w-full max-w-xs" style={{ borderColor: `${theme.textColor}20` }}>
              Generated by GeminiFolio
           </div>
